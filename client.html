@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websocket test</title>
+</head>
+<body>
+<script>
+    const webSocket = new WebSocket('ws://localhost:8080/ws');
+
+    let pongCount = 0;
+
+    webSocket.onopen = (event) => {
+        console.log('Connection opened');
+    };
+    webSocket.onmessage = (event) => {
+        console.log('Message received: ' + event.data);
+
+        // unfortunately, we can't set an opcode ping in the client ao we are not going to get pong back
+        // this was meant to be demo only, the server should be the one sending pings
+        if (event.data === 'pong') {
+            pongCount++;
+            document.querySelector('p').style.display = 'block';
+
+            if (pongCount > 1) {
+                document.querySelector('p span').style.display = 'inline';
+                document.querySelector('p span').innerText = '(' + pongCount + 'x)';
+            }
+        }
+    };
+    webSocket.onclose = (event) => {
+        console.log('Connection closed');
+    };
+
+    function ping() {
+        if (webSocket.readyState === WebSocket.OPEN) {
+            webSocket.send(JSON.stringify({type: 'ping'}));
+        } else {
+            console.error('WebSocket is not open. Ready state: ' + webSocket.readyState);
+        }
+    }
+</script>
+<button onclick="ping()">Ping</button>
+<p style="display: none">
+    Pong <span style="display: none"></span>
+</p>
+</body>
+</html>
