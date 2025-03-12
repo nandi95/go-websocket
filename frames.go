@@ -8,7 +8,7 @@ import (
 
 type Opcode = int
 
-// using hexadecimal values for the opcodes, god knows why...
+// using hexadecimal values for the opcodes, to seem clever...
 const (
 	Continuation = 0x0
 	Text         = 0x1
@@ -136,7 +136,7 @@ func sendFrame(conn net.Conn, opcode Opcode, payload []byte) error {
 	// merges bits with the OR operator
 	byte1 := byte(0x80) | byte(opcode)
 
-	// second byte is the mask bit (leftmost bit) and the payload length (7 bits)
+	// the second byte is the mask bit (leftmost bit) and the payload length (7 bits)
 	// no mask for server frames
 	byte2 := byte(0)
 
